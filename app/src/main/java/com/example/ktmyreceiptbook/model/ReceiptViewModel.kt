@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 class ReceiptViewModel(application: Application): AndroidViewModel(application)
 {
     var repository: ReceiptRepository = ReceiptRepository(application)
-    lateinit var allReceipts: LiveData<List<Receipt>>
+    var allReceipts: LiveData<List<Receipt>>
     val currentSelectedReceipt: MutableLiveData<Receipt> = MutableLiveData()
 
     init

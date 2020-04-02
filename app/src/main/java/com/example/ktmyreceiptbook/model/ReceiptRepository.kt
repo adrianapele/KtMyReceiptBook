@@ -6,12 +6,12 @@ import androidx.lifecycle.LiveData
 
 class ReceiptRepository(application: Application)
 {
-    lateinit var receiptDao: ReceiptDao
-    lateinit var allReceipts: LiveData<List<Receipt>>
+    var receiptDao: ReceiptDao
+    var allReceipts: LiveData<List<Receipt>>
 
     init
     {
-        var database = ReceiptDatabase.getInstance(application)
+        val database = ReceiptDatabase.getInstance(application)
         receiptDao = database.receiptDao()
         allReceipts = receiptDao.getAllReceipts()
     }
