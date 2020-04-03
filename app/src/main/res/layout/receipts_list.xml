@@ -34,6 +34,7 @@
             android:layout_below="@id/listing_receipt_short_desc_id"
             android:layout_margin="4dp"
             android:scaleType="fitXY"
-            android:src="@drawable/no_image_available" />
+            android:src="@drawable/no_image_available"
+            android:contentDescription="Image" />
     </RelativeLayout>
 </LinearLayout>
