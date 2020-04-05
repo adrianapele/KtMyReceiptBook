@@ -8,17 +8,17 @@ import androidx.recyclerview.widget.RecyclerView
 class MyRecyclerView(context: Context, attributeSet: AttributeSet, defStyle: Int):
     RecyclerView(context, attributeSet, defStyle)
 {
-    lateinit var view: View
+    private lateinit var view: View
 
     fun setEmptyView(view: View)
     {
-        this.view = view;
+        this.view = view
         setViewsVisibility()
     }
 
-    fun setViewsVisibility()
+    private fun setViewsVisibility()
     {
-        var hasAdapterData = adapter?.itemCount == 0
+        val hasAdapterData = adapter?.itemCount == 0
         if (hasAdapterData)
         {
             view.visibility = View.VISIBLE
@@ -40,7 +40,7 @@ class MyRecyclerView(context: Context, attributeSet: AttributeSet, defStyle: Int
         adapter?.registerAdapterDataObserver(observer)
     }
 
-    val observer = object: AdapterDataObserver()
+    private val observer = object: AdapterDataObserver()
     {
         override fun onChanged()
         {

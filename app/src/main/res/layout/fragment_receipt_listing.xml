@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ReceiptListingFragment">
 
-    <com.example.myreceiptbook.adapter.MyRecyclerView
+    <com.example.ktmyreceiptbook.adapter.MyRecyclerView
         android:id="@+id/recycler_view_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/empty_subtitle_id"
-            android:src="@drawable/sadbox2"
+
             android:contentDescription="image"/>
 
     </RelativeLayout>
@@ -56,6 +56,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="32dp"
-        android:src="@drawable/fab_icon" />
+        android:src="@drawable/ic_add" />
 
 </RelativeLayout>
