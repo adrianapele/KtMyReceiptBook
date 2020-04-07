@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class MyRecyclerView(context: Context, attributeSet: AttributeSet, defStyle: Int):
+class MyRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0):
     RecyclerView(context, attributeSet, defStyle)
 {
     private lateinit var view: View

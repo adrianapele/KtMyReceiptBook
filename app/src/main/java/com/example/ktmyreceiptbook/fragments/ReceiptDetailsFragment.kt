@@ -49,13 +49,16 @@ class ReceiptDetailsFragment : Fragment()
         deleteButton = rootView.findViewById(R.id.delete_button_id)
         deleteButton.setOnClickListener(this::openDeleteDialog)
 
-        receiptViewModel = ViewModelProvider(this)[ReceiptViewModel::class.java]
+        receiptViewModel = activity?.let(::ViewModelProvider)!![ReceiptViewModel::class.java]
         receiptViewModel.currentSelectedReceipt.observe(viewLifecycleOwner, Observer<Receipt>
-        { receipt: Receipt ->
-            titleTextView.text = receipt.title
-            fullDescTextView.text = receipt.fullDesc
-            imageView.setImageURI(Uri.parse(receipt.imageUri))
-            imageView.setOnClickListener { openFullSizeImageWithPinch(receipt) }
+        { receipt: Receipt? ->
+            if (receipt != null)
+            {
+                titleTextView.text = receipt.title
+                fullDescTextView.text = receipt.fullDesc
+                imageView.setImageURI(Uri.parse(receipt.imageUri))
+                imageView.setOnClickListener { openFullSizeImageWithPinch(receipt) }
+            }
         })
 
         activity?.title = "Receipt Details"
@@ -70,7 +73,10 @@ class ReceiptDetailsFragment : Fragment()
 
         var fragment: Fragment? = supportFragmentManager.findFragmentByTag(CREATE_EDIT_FRAGMENT_TAG)
         if (fragment == null)
+        {
             fragment = CreateEditFragment()
+            fragment.requestType = REQUEST_EDIT
+        }
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment, CREATE_EDIT_FRAGMENT_TAG)
@@ -85,8 +91,8 @@ class ReceiptDetailsFragment : Fragment()
             .setMessage("Do you want to delete this receipt?")
             .setNegativeButton("Cancel") { dialog, _ ->  dialog.dismiss()}
             .setPositiveButton("OKAY") { _, _ ->
-                receiptViewModel.delete(receiptViewModel.currentSelectedReceipt.value!!)
-                receiptViewModel.currentSelectedReceipt.value = null
+                receiptViewModel.delete(receiptViewModel.getCurrentSelectedReceipt()!!)
+                receiptViewModel.setCurrentSelectedReceipt(null)
 
                 activity?.onBackPressed()
             }

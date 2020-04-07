@@ -39,11 +39,11 @@
             android:textColor="#A2AAB0" />
 
         <ImageView
-            android:id="@+id/empty_inage_id"
+            android:id="@+id/empty_image_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/empty_subtitle_id"
-
+            android:src="@drawable/sadbox2"
             android:contentDescription="image"/>
 
     </RelativeLayout>

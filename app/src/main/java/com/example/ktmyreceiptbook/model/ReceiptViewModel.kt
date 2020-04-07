@@ -7,17 +7,21 @@ import androidx.lifecycle.MutableLiveData
 
 class ReceiptViewModel(application: Application): AndroidViewModel(application)
 {
-    val repository: ReceiptRepository
+    private val repository: ReceiptRepository = ReceiptRepository(application)
     var allReceipts: LiveData<List<Receipt>>
     var currentSelectedReceipt: MutableLiveData<Receipt> = MutableLiveData()
 
     init
     {
-        repository = ReceiptRepository(application)
         allReceipts = repository.allReceipts
     }
 
-    fun setCurrentSelectedReceipt(receipt: Receipt?) = currentSelectedReceipt.postValue(receipt)
+    fun setCurrentSelectedReceipt(receipt: Receipt?)
+    {
+        currentSelectedReceipt.value = receipt
+    }
+
+    fun getCurrentSelectedReceipt(): Receipt? = currentSelectedReceipt.value
 
     fun insert(receipt: Receipt) = repository.insert(receipt)
     fun update(receipt: Receipt) = repository.update(receipt)

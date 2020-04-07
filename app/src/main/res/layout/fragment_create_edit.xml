@@ -19,7 +19,7 @@
             android:layout_margin="4dp"
             android:scaleType="fitXY"
             android:src="@drawable/no_image_available"
-            android:contentDescription="image" />
+             />
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +39,7 @@
             android:inputType="text"
             android:hint="Title"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:importantForAutofill="no" />
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
             android:inputType="text"
             android:hint="Short description"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:importantForAutofill="no" />
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -78,7 +78,6 @@
             android:layout_marginLeft="4dp"
             android:inputType="textMultiLine"
             android:hint="Full description"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:importantForAutofill="no" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
     </LinearLayout>
 </ScrollView>

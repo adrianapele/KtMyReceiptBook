@@ -9,12 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.ktmyreceiptbook.R
 import com.example.ktmyreceiptbook.model.Receipt
 
 class ReceiptAdapter: ListAdapter<Receipt, ReceiptAdapter.ReceiptsViewHolder>(DiffCallback())
 {
-    lateinit var recyclerViewClickListener: RecyclerViewClickListener
+    private var recyclerViewClickListener: RecyclerViewClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptsViewHolder
     {
@@ -30,26 +31,23 @@ class ReceiptAdapter: ListAdapter<Receipt, ReceiptAdapter.ReceiptsViewHolder>(Di
 
         holder.receiptTitleTextView.text = currentReceipt.title
         holder.receiptShortDescTextView.text = currentReceipt.shortDesc
-        holder.receiptImageView.setImageURI(Uri.parse(currentReceipt.imageUri))
+//        holder.receiptImageView.setImageURI(Uri.parse(currentReceipt.imageUri))
+        Glide.with(holder.itemView).load(Uri.parse(currentReceipt.imageUri)).into(holder.receiptImageView)
     }
 
 
     inner class ReceiptsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
-        var receiptImageView: ImageView
-        var receiptTitleTextView: TextView
-        var receiptShortDescTextView: TextView
+        var receiptImageView: ImageView = itemView.findViewById(R.id.listing_receipt_image_id)
+        var receiptTitleTextView: TextView = itemView.findViewById(R.id.listing_receipt_title_id)
+        var receiptShortDescTextView: TextView = itemView.findViewById(R.id.listing_receipt_short_desc_id)
 
         init
         {
-            receiptImageView = itemView.findViewById(R.id.listing_receipt_image_id)
-            receiptTitleTextView = itemView.findViewById(R.id.listing_receipt_title_id)
-            receiptShortDescTextView = itemView.findViewById(R.id.listing_receipt_short_desc_id)
-
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION)
-                    recyclerViewClickListener.onRecyclerViewItemClick(itemView, getItem(position))
+                    recyclerViewClickListener?.onRecyclerViewItemClick(itemView, getItem(position))
             }
         }
     }
@@ -69,5 +67,10 @@ class ReceiptAdapter: ListAdapter<Receipt, ReceiptAdapter.ReceiptsViewHolder>(Di
                     oldItem.fullDesc == newItem.fullDesc &&
                     oldItem.imageUri == newItem.imageUri
         }
+    }
+
+    fun setOnRecyclerViewItemClickListener(viewListener: RecyclerViewClickListener)
+    {
+        this.recyclerViewClickListener = viewListener
     }
 }

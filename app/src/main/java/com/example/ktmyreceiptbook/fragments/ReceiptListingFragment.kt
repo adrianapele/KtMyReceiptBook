@@ -40,18 +40,18 @@ class ReceiptListingFragment: Fragment(), RecyclerViewClickListener
         myRecyclerView.layoutManager = LinearLayoutManager(activity)
         myRecyclerView.setHasFixedSize(true)
 
-        val emptyView = rootView.findViewById<RelativeLayout>(R.id.empty_view_id)
+        val emptyView: RelativeLayout = rootView.findViewById(R.id.empty_view_id)
         myRecyclerView.setEmptyView(emptyView)
 
         val adapter = ReceiptAdapter()
-        adapter.recyclerViewClickListener = this
+        adapter.setOnRecyclerViewItemClickListener(this)
         myRecyclerView.adapter = adapter
 
         val receiptsObserver = Observer<List<Receipt>>
         {
             adapter.submitList(it)
         }
-        receiptViewModel = ViewModelProvider(this)[ReceiptViewModel::class.java]
+        receiptViewModel = activity?.let(::ViewModelProvider)!![ReceiptViewModel::class.java]
         receiptViewModel.allReceipts.observe(viewLifecycleOwner, receiptsObserver)
 
         val fab = rootView.findViewById<FloatingActionButton>(R.id.fab_add_btn_id)
@@ -69,7 +69,10 @@ class ReceiptListingFragment: Fragment(), RecyclerViewClickListener
         var fragment: Fragment? = supportFragmentManager.findFragmentByTag(CREATE_EDIT_FRAGMENT_TAG)
 
         if (fragment == null)
+        {
             fragment = CreateEditFragment()
+            fragment.requestType = REQUEST_ADD
+        }
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment, CREATE_EDIT_FRAGMENT_TAG)

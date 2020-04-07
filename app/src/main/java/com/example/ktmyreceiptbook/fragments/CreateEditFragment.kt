@@ -43,15 +43,21 @@ private const val READ_EXTERNAL_STORAGE_PERMISSION_CODE = 110
 
 class CreateEditFragment : Fragment()
 {
-    lateinit var imageView: ImageView
-    lateinit var titleEditText: EditText
-    lateinit var shortDescEditText: EditText
-    lateinit var fullDescEditText: EditText
+    private lateinit var imageView: ImageView
+    private lateinit var titleEditText: EditText
+    private lateinit var shortDescEditText: EditText
+    private lateinit var fullDescEditText: EditText
 
-    lateinit var receiptViewModel: ReceiptViewModel
+    private lateinit var receiptViewModel: ReceiptViewModel
 
-    lateinit var requestType: String
-    lateinit var imagePath: String
+    var requestType: String? = null
+    private var imagePath: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,8 +71,8 @@ class CreateEditFragment : Fragment()
         imageView = rootView.findViewById(R.id.create_edit_image_id)
         imageView.setOnClickListener(this::selectImage)
 
-        receiptViewModel = ViewModelProvider(this)[ReceiptViewModel::class.java]
-        val currentSelectedReceipt: Receipt? = receiptViewModel.currentSelectedReceipt.value
+        receiptViewModel = activity?.let(::ViewModelProvider)!![ReceiptViewModel::class.java]
+        val currentSelectedReceipt: Receipt? = receiptViewModel.getCurrentSelectedReceipt()
 
         if (currentSelectedReceipt != null && REQUEST_EDIT == requestType)
         {
@@ -94,12 +100,11 @@ class CreateEditFragment : Fragment()
         AlertDialog.Builder(view.context)
             .setTitle("Choose receipt picture")
             .setItems(options) { dialog, which ->
-                val option: CharSequence = options[which]
-
-                when {
-                    TAKE_PHOTO_OPTION == option -> takePhotoWithPermissions(view.context)
-                    CHOOSE_PHOTO_FROM_GALLERY_OPTION == option -> choosePhotoFromGalleryWithPermissions(view.context)
-                    CANCEL_OPTION == option -> dialog.dismiss()
+                when (options[which])
+                {
+                    TAKE_PHOTO_OPTION -> takePhotoWithPermissions(view.context)
+                    CHOOSE_PHOTO_FROM_GALLERY_OPTION -> choosePhotoFromGalleryWithPermissions(view.context)
+                    CANCEL_OPTION -> dialog.dismiss()
                 }
             }
             .create()
@@ -134,10 +139,10 @@ class CreateEditFragment : Fragment()
             }
         }
 
-        takePhotos(context)
+        takePhoto(context)
     }
 
-    private fun takePhotos(context: Context)
+    private fun takePhoto(context: Context)
     {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
@@ -161,7 +166,7 @@ class CreateEditFragment : Fragment()
                 try
                 {
                     photoURI = FileProvider.getUriForFile(context,
-                        "com.example.android.fileprovider",
+                        "com.example.android.kt.fileprovider",
                         photoFile)
                 }
                 catch (exception: IllegalArgumentException)
@@ -253,7 +258,7 @@ class CreateEditFragment : Fragment()
     private fun getPathFromUri(contentUri: Uri): String?
     {
         val selection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = activity?.contentResolver?.query(contentUri, null, null, null)
+        val cursor = activity?.contentResolver?.query(contentUri, selection,null, null, null)
 
         if (cursor?.moveToFirst()!!)
         {
@@ -273,14 +278,14 @@ class CreateEditFragment : Fragment()
     {
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE)
         {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                takePhotos(context!!)
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                takePhoto(context!!)
             else
                 Toast.makeText(context, "Camera Permission Not Granted", Toast.LENGTH_SHORT).show()
         }
         else if (requestCode == READ_EXTERNAL_STORAGE_PERMISSION_CODE)
         {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 choosePhotoFromGallery(context!!)
             else
                 Toast.makeText(context, "Read External Storage Permission Not Granted", Toast.LENGTH_SHORT).show()
@@ -316,24 +321,24 @@ class CreateEditFragment : Fragment()
             Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
             return
         }
-        else if (imagePath.isEmpty())
+        if (imagePath == null || imagePath!!.isEmpty())
         {
             Toast.makeText(context, "Please add an image", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val currentSelectedReceipt = receiptViewModel.currentSelectedReceipt.value
+        val currentSelectedReceipt = receiptViewModel.getCurrentSelectedReceipt()
 
         if (requestType == REQUEST_ADD && currentSelectedReceipt == null)
         {
-            val receipt = Receipt(0, title, shortDesc, fullDesc, imagePath)
+            val receipt = Receipt(0, title, shortDesc, fullDesc, imagePath!!)
             receiptViewModel.insert(receipt)
 
             Toast.makeText(context, "Receipt saved", Toast.LENGTH_SHORT).show()
         }
         else if (requestType == REQUEST_EDIT && currentSelectedReceipt != null)
         {
-            val receipt = Receipt(currentSelectedReceipt.id, title, shortDesc, fullDesc, imagePath)
+            val receipt = Receipt(currentSelectedReceipt.id, title, shortDesc, fullDesc, imagePath!!)
             receiptViewModel.update(receipt)
             receiptViewModel.setCurrentSelectedReceipt(receipt)
 
@@ -344,42 +349,4 @@ class CreateEditFragment : Fragment()
 
         activity?.onBackPressed()
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
